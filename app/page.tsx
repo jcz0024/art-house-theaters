@@ -4,6 +4,8 @@ import { CityCard } from "@/components/city-card"
 import { Footer } from "@/components/footer"
 import { supabase } from "@/lib/supabase"
 
+export const dynamic = 'force-dynamic'
+
 interface Theater {
   slug: string
   name: string
