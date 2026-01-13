@@ -1,7 +1,12 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { MapPin, ExternalLink, Navigation, Film } from "lucide-react"
+import { MapPin, ExternalLink, Navigation, Film, Calendar, Monitor, Heart } from "lucide-react"
+import { supabase } from "@/lib/supabase"
+import { notFound } from "next/navigation"
+import type { Metadata } from "next"
+
+export const dynamic = 'force-dynamic'
 
 interface TheaterPageProps {
   params: Promise<{
@@ -9,79 +14,80 @@ interface TheaterPageProps {
   }>
 }
 
-// Mock data - in production, this would come from a database
-const theaterData: Record<
-  string,
-  {
-    name: string
-    city: string
-    state: string
-    address: string
-    zipCode: string
-    website: string
-    description: string[]
-    tags: string[]
-    citySlug: string
+interface Theater {
+  slug: string
+  name: string
+  city: string
+  state: string
+  year_established: number | null
+  screens: number | null
+  is_nonprofit: boolean | null
+  website: string | null
+  description: string | null
+}
+
+// Helper to create city slug
+function createCitySlug(city: string): string {
+  return city.toLowerCase().replace(/\s+/g, '-')
+}
+
+export async function generateMetadata({ params }: TheaterPageProps): Promise<Metadata> {
+  const { slug } = await params
+
+  const { data: theater } = await supabase
+    .from('theaters')
+    .select('name, city, state, description')
+    .eq('slug', slug)
+    .single<{ name: string; city: string; state: string; description: string | null }>()
+
+  if (!theater) {
+    return { title: 'Theater Not Found' }
   }
-> = {
-  "new-beverly-cinema": {
-    name: "The New Beverly Cinema",
-    city: "Los Angeles",
-    state: "CA",
-    address: "7165 Beverly Blvd",
-    zipCode: "90036",
-    website: "https://thenewbev.com",
-    description: [
-      "The New Beverly Cinema has been a Los Angeles institution since 1978, and under the ownership of Quentin Tarantino since 2014, it has become a mecca for film purists and cinephiles. This single-screen revival house is dedicated exclusively to 35mm film projection—no digital, ever.",
-      "Every week brings meticulously programmed double and triple features, from film noir and westerns to cult classics and foreign masterpieces. The New Bev's commitment to celluloid is unwavering, with Tarantino himself often selecting prints from his personal collection.",
-      "The theater's intimate 275-seat auditorium retains its vintage charm, complete with red velvet curtains and a classic marquee. It's a place where midnight movies feel dangerous again, where you can experience cinema the way it was meant to be seen—projected from actual film, with all its grain, texture, and warmth intact.",
-    ],
-    tags: ["35mm", "Repertory", "Double Features", "Historic", "Cult Classics"],
-    citySlug: "los-angeles",
-  },
-  "laemmle-royal": {
-    name: "Laemmle Royal",
-    city: "Los Angeles",
-    state: "CA",
-    address: "11523 Santa Monica Blvd",
-    zipCode: "90025",
-    website: "https://laemmle.com/royal",
-    description: [
-      "Since 1980, the Laemmle Royal has been West LA's premier destination for art house cinema, foreign films, and independent American features that challenge and inspire. Part of the historic Laemmle theater chain—a family business dating back to 1938—the Royal maintains the tradition of presenting films that matter.",
-      "The theater's four screens offer an eclectic mix of international cinema, documentary films, and American indies that mainstream multiplexes won't touch. From Cannes winners to festival darlings, the Royal is where discerning filmgoers come to discover cinema from around the world.",
-      "With its convenient West LA location and adjoining wine bar, the Royal has become more than a theater—it's a gathering place for a community of film lovers who believe in cinema's power to expand perspectives and cross cultural boundaries.",
-    ],
-    tags: ["Foreign Films", "Indie", "Bar", "Documentary", "Festival Films"],
-    citySlug: "los-angeles",
-  },
+
+  const desc = theater.description || `${theater.name} is an independent cinema in ${theater.city}, ${theater.state}.`
+
+  return {
+    title: `${theater.name} | Art House Theaters`,
+    description: desc,
+    openGraph: {
+      title: theater.name,
+      description: desc,
+      type: 'website',
+    },
+  }
 }
 
 export default async function TheaterPage({ params }: TheaterPageProps) {
   const { slug } = await params
-  const theater = theaterData[slug] || theaterData["new-beverly-cinema"]
 
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${theater.address}, ${theater.city}, ${theater.state} ${theater.zipCode}`,
-  )}`
+  const { data: theater, error } = await supabase
+    .from('theaters')
+    .select('slug, name, city, state, year_established, screens, is_nonprofit, website, description')
+    .eq('slug', slug)
+    .single<Theater>()
+
+  if (error || !theater) {
+    notFound()
+  }
+
+  const citySlug = createCitySlug(theater.city)
 
   return (
     <div className="dark min-h-screen bg-background">
-      {/* Hero Section with Placeholder Image Area */}
+      {/* Hero Section */}
       <div className="relative border-b border-border/40 bg-gradient-to-b from-card/40 to-background">
-        {/* Placeholder image area */}
-        <div className="relative h-[300px] overflow-hidden bg-gradient-to-br from-card/60 via-card/40 to-background sm:h-[400px] lg:h-[500px]">
-          <div className="absolute inset-0 bg-[url('/vintage-movie-theater-marquee-at-night.jpg')] bg-cover bg-center opacity-30" />
+        <div className="relative h-[200px] overflow-hidden bg-gradient-to-br from-card/60 via-card/40 to-background sm:h-[280px]">
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
-          {/* Floating content */}
+          {/* Breadcrumb */}
           <div className="absolute bottom-0 left-0 right-0">
-            <div className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
-              <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="mx-auto max-w-5xl px-4 pb-6 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Link href="/" className="transition-colors hover:text-foreground">
                   Home
                 </Link>
                 <span>/</span>
-                <Link href={`/city/${theater.citySlug}`} className="transition-colors hover:text-foreground">
+                <Link href={`/city/${citySlug}`} className="transition-colors hover:text-foreground">
                   {theater.city}
                 </Link>
                 <span>/</span>
@@ -97,35 +103,69 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
             {theater.name}
           </h1>
 
-          <div className="mb-6 space-y-2 text-muted-foreground">
-            <div className="flex items-start gap-2">
-              <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
-              <div className="text-sm sm:text-base">
-                <div>{theater.address}</div>
-                <div>
-                  {theater.city}, {theater.state} {theater.zipCode}
-                </div>
-              </div>
-            </div>
+          <div className="mb-6 flex items-center gap-2 text-muted-foreground">
+            <MapPin className="h-4 w-4 flex-shrink-0" />
+            <span className="text-base">
+              {theater.city}, {theater.state}
+            </span>
+          </div>
+
+          {/* Description */}
+          {theater.description && (
+            <p className="mb-8 max-w-3xl text-pretty text-lg leading-relaxed text-neutral-300">
+              {theater.description}
+            </p>
+          )}
+
+          {/* Theater Details */}
+          <div className="mb-8 flex flex-wrap gap-3">
+            {theater.year_established && theater.year_established > 0 && (
+              <Badge variant="secondary" className="bg-secondary/50 text-sm font-normal">
+                <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                Est. {theater.year_established}
+              </Badge>
+            )}
+            {theater.screens && theater.screens > 0 && (
+              <Badge variant="secondary" className="bg-secondary/50 text-sm font-normal">
+                <Monitor className="mr-1.5 h-3.5 w-3.5" />
+                {theater.screens} {theater.screens === 1 ? 'Screen' : 'Screens'}
+              </Badge>
+            )}
+            {theater.is_nonprofit && (
+              <Badge variant="secondary" className="bg-[#D4AF37]/20 text-[#D4AF37] text-sm font-normal">
+                <Heart className="mr-1.5 h-3.5 w-3.5" />
+                Nonprofit
+              </Badge>
+            )}
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
-                <Navigation className="mr-2 h-4 w-4" />
-                Get Directions
-              </a>
-            </Button>
+            {theater.website && (
+              <Button
+                asChild
+                size="lg"
+                className="bg-[#D4AF37] text-black hover:bg-[#E5C158]"
+              >
+                <a href={theater.website} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Visit Website
+                </a>
+              </Button>
+            )}
             <Button
               asChild
               size="lg"
               variant="outline"
-              className="border-border/60 hover:border-primary bg-transparent"
+              className="border-border/60 hover:border-[#D4AF37] bg-transparent"
             >
-              <a href={theater.website} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Visit Website
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${theater.name}, ${theater.city}, ${theater.state}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Navigation className="mr-2 h-4 w-4" />
+                Get Directions
               </a>
             </Button>
           </div>
@@ -134,34 +174,11 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
 
       {/* Main Content */}
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Tags */}
-        <div className="mb-8 flex flex-wrap gap-2">
-          {theater.tags.map((tag) => (
-            <Badge
-              key={tag}
-              variant="secondary"
-              className="bg-secondary/50 text-sm font-normal text-secondary-foreground"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Description */}
-        <div className="mb-12 space-y-6">
-          <h2 className="mb-6 font-serif text-2xl font-semibold text-foreground">About {theater.name}</h2>
-          {theater.description.map((paragraph, index) => (
-            <p key={index} className="text-pretty leading-relaxed text-muted-foreground">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-
         {/* What's Playing Section */}
         <div className="rounded-lg border border-border/40 bg-card/30 p-8 backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-full bg-primary/10 p-2">
-              <Film className="h-5 w-5 text-primary" />
+            <div className="rounded-full bg-[#D4AF37]/10 p-2">
+              <Film className="h-5 w-5 text-[#D4AF37]" />
             </div>
             <h2 className="font-serif text-xl font-semibold text-foreground">What's Playing</h2>
           </div>
@@ -169,20 +186,22 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
             Visit their website for current showtimes and programming. Many art house theaters update their schedules
             weekly with special events, director Q&As, and thematic series.
           </p>
-          <div className="mt-6">
-            <Button asChild variant="outline" className="border-border/60 hover:border-primary bg-transparent">
-              <a href={theater.website} target="_blank" rel="noopener noreferrer">
-                View Current Schedule
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          </div>
+          {theater.website && (
+            <div className="mt-6">
+              <Button asChild variant="outline" className="border-border/60 hover:border-[#D4AF37] bg-transparent">
+                <a href={theater.website} target="_blank" rel="noopener noreferrer">
+                  View Current Schedule
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Back to City Link */}
         <div className="mt-12 border-t border-border/40 pt-8">
           <Link
-            href={`/city/${theater.citySlug}`}
+            href={`/city/${citySlug}`}
             className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             ← Back to all theaters in {theater.city}
