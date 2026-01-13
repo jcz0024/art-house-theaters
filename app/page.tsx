@@ -3,7 +3,6 @@ import { TheaterCard } from "@/components/theater-card"
 import { CityCard } from "@/components/city-card"
 import { Footer } from "@/components/footer"
 import { supabase } from "@/lib/supabase"
-import UnderConstruction from "@/components/under-construction"
 
 export const dynamic = 'force-dynamic'
 
@@ -73,10 +72,6 @@ async function getTheaters(): Promise<Theater[]> {
 }
 
 export default async function Home() {
-  if (process.env.NEXT_PUBLIC_SITE_LIVE !== "true") {
-    return <UnderConstruction />
-  }
-
   // #region agent log
   fetch('http://127.0.0.1:7242/ingest/7b0b28d2-c14e-4ba4-8529-cf4e35d8452b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/page.tsx:48',message:'Home component render start',data:{nodeEnv:process.env.NODE_ENV,vercelEnv:process.env.VERCEL_ENV||'not set'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
   // #endregion
