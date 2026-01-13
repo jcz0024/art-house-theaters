@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 const cities = [
   "Los Angeles",
@@ -25,6 +26,19 @@ const cities = [
 export function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isHovering, setIsHovering] = useState(false)
+  const router = useRouter()
+
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch(searchQuery)
+    }
+  }
 
   return (
     <section className="relative overflow-hidden border-b border-border/50 bg-gradient-to-b from-background via-background/98 to-[#0a0a0a] px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
@@ -49,9 +63,10 @@ export function HeroSection() {
             <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-[#D4AF37]" />
             <input
               type="text"
-              placeholder="Search by city or zip code..."
+              placeholder="Search by city, theater name, or state..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="w-full rounded-lg border border-border bg-card/50 py-4 pl-12 pr-4 text-base text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm transition-all focus:border-[#D4AF37]/60 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:shadow-[0_0_20px_rgba(212,175,55,0.15)]"
             />
           </div>
@@ -75,6 +90,7 @@ export function HeroSection() {
               {cities.map((city) => (
                 <button
                   key={city}
+                  onClick={() => handleSearch(city)}
                   className="flex-shrink-0 rounded-full border border-border bg-card/30 px-5 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-all hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
                 >
                   {city}
@@ -83,6 +99,7 @@ export function HeroSection() {
               {cities.map((city) => (
                 <button
                   key={`${city}-duplicate`}
+                  onClick={() => handleSearch(city)}
                   className="flex-shrink-0 rounded-full border border-border bg-card/30 px-5 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-all hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
                 >
                   {city}
