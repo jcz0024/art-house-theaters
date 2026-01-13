@@ -35,6 +35,29 @@ interface Theater {
   website: string | null
 }
 
+// Map full state names to abbreviations
+const stateNameToAbbr: Record<string, string> = {
+  "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+  "california": "CA", "colorado": "CO", "connecticut": "CT", "delaware": "DE",
+  "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+  "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+  "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+  "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS",
+  "missouri": "MO", "montana": "MT", "nebraska": "NE", "nevada": "NV",
+  "new hampshire": "NH", "new jersey": "NJ", "new mexico": "NM", "new york": "NY",
+  "north carolina": "NC", "north dakota": "ND", "ohio": "OH", "oklahoma": "OK",
+  "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+  "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+  "vermont": "VT", "virginia": "VA", "washington": "WA", "west virginia": "WV",
+  "wisconsin": "WI", "wyoming": "WY", "district of columbia": "DC",
+}
+
+// Get state abbreviation if query matches a full state name
+function getStateAbbr(query: string): string | null {
+  const normalized = query.toLowerCase().trim()
+  return stateNameToAbbr[normalized] || null
+}
+
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q } = await searchParams
   const query = q || ""
@@ -42,10 +65,26 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   let theaters: Theater[] = []
 
   if (query) {
+    // Check if query is a full state name and get its abbreviation
+    const stateAbbr = getStateAbbr(query)
+
+    // Build search terms - include both original query and state abbreviation if found
+    const searchTerms = [query]
+    if (stateAbbr) {
+      searchTerms.push(stateAbbr)
+    }
+
+    // Build OR conditions for all search terms
+    const orConditions = searchTerms.flatMap(term => [
+      `name.ilike.%${term}%`,
+      `city.ilike.%${term}%`,
+      `state.ilike.%${term}%`
+    ]).join(',')
+
     const { data, error } = await supabase
       .from('theaters')
       .select('slug, name, city, state, year_established, screens, is_nonprofit, website')
-      .or(`name.ilike.%${query}%,city.ilike.%${query}%,state.ilike.%${query}%`)
+      .or(orConditions)
       .order('name')
 
     if (error) {
