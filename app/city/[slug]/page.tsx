@@ -1,7 +1,10 @@
 import { TheaterCard } from "@/components/theater-card"
-import { Badge } from "@/components/ui/badge"
+import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import { MapPin } from "lucide-react"
+import type { Metadata } from "next"
+
+export const dynamic = 'force-dynamic'
 
 interface CityPageProps {
   params: Promise<{
@@ -9,94 +12,168 @@ interface CityPageProps {
   }>
 }
 
-// Mock data - in production, this would come from a database
-const cityData: Record<string, { name: string; state: string; description: string }> = {
-  "los-angeles": {
-    name: "Los Angeles",
-    state: "CA",
-    description:
-      "Los Angeles has long been the epicenter of American cinema, and its art house scene reflects that rich history. From historic single-screen theaters in Echo Park to modernist screening rooms in West Hollywood, LA's independent cinemas offer everything from rare 35mm prints to experimental new media. The city's repertory houses and nonprofit cinemas serve as vital cultural anchors, preserving film history while championing emerging voices.",
-  },
-  "new-york": {
-    name: "New York",
-    state: "NY",
-    description:
-      "New York City's art house theater scene is unmatched in its diversity and vitality. From Manhattan's legendary Film Forum to Brooklyn's indie havens, the city offers cinephiles an embarrassment of riches. These theaters are more than screening rooms—they're gathering places for film lovers, educators, and artists who believe in cinema's power to challenge, inspire, and transform.",
-  },
-  chicago: {
-    name: "Chicago",
-    state: "IL",
-    description:
-      "Chicago's independent cinema landscape reflects the city's working-class roots and sophisticated cultural appetite. Historic neighborhood theaters have been lovingly restored, while new venues continue to open, all dedicated to presenting films that mainstream multiplexes won't touch. The city's art house theaters are community anchors, bringing people together around shared cinematic experiences.",
-  },
+// City mapping: slug → display name
+const cityMapping: Record<string, string> = {
+  "los-angeles": "Los Angeles",
+  "new-york": "New York",
+  "brooklyn": "Brooklyn",
+  "chicago": "Chicago",
+  "austin": "Austin",
+  "seattle": "Seattle",
+  "portland": "Portland",
+  "san-francisco": "San Francisco",
+  "denver": "Denver",
 }
 
-const cityTheaters: Record<string, any[]> = {
+// State mapping for display
+const cityStateMapping: Record<string, string> = {
+  "los-angeles": "CA",
+  "new-york": "NY",
+  "brooklyn": "NY",
+  "chicago": "IL",
+  "austin": "TX",
+  "seattle": "WA",
+  "portland": "OR",
+  "san-francisco": "CA",
+  "denver": "CO",
+}
+
+// City descriptions for SEO
+const cityDescriptions: Record<string, string> = {
+  "los-angeles": "Discover independent and art house cinemas in Los Angeles. From historic single-screen theaters to modern screening rooms, find the best repertory and indie film venues in LA.",
+  "new-york": "Explore New York City's legendary art house theater scene. From Manhattan's Film Forum to Brooklyn's indie havens, find independent cinemas showing classic and contemporary films.",
+  "brooklyn": "Find art house theaters in Brooklyn, NY. Discover indie cinemas, repertory houses, and community-focused film venues in one of America's most vibrant neighborhoods.",
+  "chicago": "Discover Chicago's independent cinema landscape. Find art house theaters, repertory houses, and community cinemas throughout the Windy City.",
+  "austin": "Explore Austin's vibrant art house theater scene. From the Alamo Drafthouse to historic venues, find indie cinemas in Texas's film-loving capital.",
+  "seattle": "Find art house theaters in Seattle. Discover independent cinemas, repertory houses, and film festivals in the Pacific Northwest's cultural hub.",
+  "portland": "Explore Portland's unique art house theater scene. Find indie cinemas, brewpub theaters, and repertory houses in Oregon's creative capital.",
+  "san-francisco": "Discover art house cinemas in San Francisco. From historic theaters to modern screening rooms, find independent film venues in the Bay Area.",
+  "denver": "Find art house theaters in Denver. Explore independent cinemas and repertory houses in Colorado's Mile High City.",
+}
+
+// Helper to convert slug to city name
+function slugToCityName(slug: string): string {
+  return cityMapping[slug] || slug.split('-').map(word =>
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ')
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const cityName = slugToCityName(slug)
+  const description = cityDescriptions[slug] || `Find art house and independent theaters in ${cityName}. Discover repertory cinemas, indie film venues, and community theaters.`
+
+  return {
+    title: `Art House Theaters in ${cityName} | Independent Cinemas`,
+    description,
+    openGraph: {
+      title: `Art House Theaters in ${cityName}`,
+      description,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Art House Theaters in ${cityName}`,
+      description,
+    },
+  }
+}
+
+interface Theater {
+  slug: string
+  name: string
+  city: string
+  state: string
+  year_established: number | null
+  screens: number | null
+  is_nonprofit: boolean | null
+  website: string | null
+}
+
+// Nearby cities for sidebar
+const nearbyCitiesMap: Record<string, { name: string; slug: string }[]> = {
   "los-angeles": [
-    {
-      name: "The New Beverly Cinema",
-      city: "Los Angeles",
-      state: "CA",
-      description: "Quentin Tarantino's repertory theater showing double features on 35mm.",
-      tags: ["35mm", "Repertory", "Double Features"],
-      slug: "new-beverly-cinema",
-    },
-    {
-      name: "Laemmle Royal",
-      city: "Los Angeles",
-      state: "CA",
-      description: "West LA's premier art house cinema for foreign and independent films.",
-      tags: ["Foreign Films", "Indie", "Bar"],
-      slug: "laemmle-royal",
-    },
-    {
-      name: "American Cinematheque",
-      city: "Los Angeles",
-      state: "CA",
-      description: "Nonprofit preserving and presenting classic Hollywood and international cinema.",
-      tags: ["Nonprofit", "Classics", "Q&A"],
-      slug: "american-cinematheque",
-    },
-    {
-      name: "The Vista Theatre",
-      city: "Los Angeles",
-      state: "CA",
-      description: "Egyptian-themed single-screen palace showcasing indie and art films since 1923.",
-      tags: ["Historic", "Single Screen", "Indie"],
-      slug: "vista-theatre",
-    },
-    {
-      name: "Vidiots",
-      city: "Los Angeles",
-      state: "CA",
-      description: "Eagle Rock cinema and video store celebrating film culture and community.",
-      tags: ["Video Store", "Bar/Food", "Events"],
-      slug: "vidiots",
-    },
-    {
-      name: "Alamo Drafthouse DTLA",
-      city: "Los Angeles",
-      state: "CA",
-      description: "Full restaurant cinema with genre programming and midnight movies.",
-      tags: ["Bar/Food", "Midnight Movies", "Events"],
-      slug: "alamo-drafthouse-dtla",
-    },
+    { name: "San Francisco", slug: "san-francisco" },
+    { name: "San Diego", slug: "san-diego" },
+    { name: "Portland", slug: "portland" },
+    { name: "Seattle", slug: "seattle" },
+  ],
+  "new-york": [
+    { name: "Brooklyn", slug: "brooklyn" },
+    { name: "Boston", slug: "boston" },
+    { name: "Philadelphia", slug: "philadelphia" },
+    { name: "Chicago", slug: "chicago" },
+  ],
+  "brooklyn": [
+    { name: "New York", slug: "new-york" },
+    { name: "Boston", slug: "boston" },
+    { name: "Philadelphia", slug: "philadelphia" },
+    { name: "Chicago", slug: "chicago" },
+  ],
+  "chicago": [
+    { name: "Detroit", slug: "detroit" },
+    { name: "Minneapolis", slug: "minneapolis" },
+    { name: "Denver", slug: "denver" },
+    { name: "New York", slug: "new-york" },
+  ],
+  "austin": [
+    { name: "Houston", slug: "houston" },
+    { name: "Dallas", slug: "dallas" },
+    { name: "Denver", slug: "denver" },
+    { name: "Los Angeles", slug: "los-angeles" },
+  ],
+  "seattle": [
+    { name: "Portland", slug: "portland" },
+    { name: "San Francisco", slug: "san-francisco" },
+    { name: "Los Angeles", slug: "los-angeles" },
+    { name: "Denver", slug: "denver" },
+  ],
+  "portland": [
+    { name: "Seattle", slug: "seattle" },
+    { name: "San Francisco", slug: "san-francisco" },
+    { name: "Los Angeles", slug: "los-angeles" },
+    { name: "Denver", slug: "denver" },
+  ],
+  "san-francisco": [
+    { name: "Los Angeles", slug: "los-angeles" },
+    { name: "Portland", slug: "portland" },
+    { name: "Seattle", slug: "seattle" },
+    { name: "Denver", slug: "denver" },
+  ],
+  "denver": [
+    { name: "Austin", slug: "austin" },
+    { name: "Chicago", slug: "chicago" },
+    { name: "Los Angeles", slug: "los-angeles" },
+    { name: "Seattle", slug: "seattle" },
   ],
 }
 
-const nearbyCities = [
-  { name: "San Francisco", slug: "san-francisco" },
-  { name: "San Diego", slug: "san-diego" },
-  { name: "Oakland", slug: "oakland" },
-  { name: "Pasadena", slug: "pasadena" },
+const defaultNearbyCities = [
+  { name: "Los Angeles", slug: "los-angeles" },
+  { name: "New York", slug: "new-york" },
+  { name: "Chicago", slug: "chicago" },
+  { name: "Austin", slug: "austin" },
 ]
-
-const filterOptions = ["All", "35mm", "Repertory", "Bar/Food", "Nonprofit"]
 
 export default async function CityPage({ params }: CityPageProps) {
   const { slug } = await params
-  const city = cityData[slug] || cityData["los-angeles"]
-  const theaters = cityTheaters[slug] || cityTheaters["los-angeles"]
+  const cityName = slugToCityName(slug)
+  const state = cityStateMapping[slug] || ""
+  const nearbyCities = nearbyCitiesMap[slug] || defaultNearbyCities.filter(c => c.slug !== slug)
+
+  // Query Supabase for theaters in this city
+  const { data: theaters, error } = await supabase
+    .from('theaters')
+    .select('slug, name, city, state, year_established, screens, is_nonprofit, website')
+    .ilike('city', cityName)
+    .order('name')
+
+  if (error) {
+    console.error('Error fetching theaters:', error)
+  }
+
+  const theaterList: Theater[] = theaters || []
 
   return (
     <div className="dark min-h-screen bg-background">
@@ -110,17 +187,17 @@ export default async function CityPage({ params }: CityPageProps) {
             <span>/</span>
             <span className="text-foreground">Cities</span>
             <span>/</span>
-            <span className="text-foreground">{city.name}</span>
+            <span className="text-foreground">{cityName}</span>
           </div>
 
           <h1 className="mb-4 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Art House Theaters in {city.name}
+            Art House Theaters in {cityName}
           </h1>
 
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="h-4 w-4" />
             <span className="text-sm">
-              {city.state} • {theaters.length} {theaters.length === 1 ? "theater" : "theaters"}
+              {state && `${state} • `}{theaterList.length} {theaterList.length === 1 ? "theater" : "theaters"}
             </span>
           </div>
         </div>
@@ -130,37 +207,29 @@ export default async function CityPage({ params }: CityPageProps) {
         <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-12">
           {/* Main Content */}
           <div>
-            {/* Introduction */}
-            <div className="mb-12">
-              <p className="text-balance leading-relaxed text-muted-foreground">{city.description}</p>
-            </div>
-
-            {/* Filters */}
-            <div className="mb-8">
-              <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-muted-foreground">Filter by</h2>
-              <div className="flex flex-wrap gap-2">
-                {filterOptions.map((filter) => (
-                  <Badge
-                    key={filter}
-                    variant={filter === "All" ? "default" : "outline"}
-                    className={
-                      filter === "All"
-                        ? "cursor-pointer bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
-                        : "cursor-pointer border-border/60 bg-transparent text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
-                    }
-                  >
-                    {filter}
-                  </Badge>
+            {/* Theater Grid or Empty State */}
+            {theaterList.length > 0 ? (
+              <div className="grid gap-6 sm:grid-cols-2">
+                {theaterList.map((theater) => (
+                  <TheaterCard key={theater.slug} {...theater} />
                 ))}
               </div>
-            </div>
-
-            {/* Theater Grid */}
-            <div className="grid gap-6 sm:grid-cols-2">
-              {theaters.map((theater) => (
-                <TheaterCard key={theater.slug} {...theater} />
-              ))}
-            </div>
+            ) : (
+              <div className="rounded-lg border border-border/40 bg-card/30 p-12 text-center">
+                <h2 className="mb-4 font-serif text-2xl font-semibold text-foreground">
+                  No theaters found in {cityName}
+                </h2>
+                <p className="mb-6 text-muted-foreground">
+                  Know one? Submit it.
+                </p>
+                <Link
+                  href="/submit"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black transition-colors hover:bg-[#E5C158]"
+                >
+                  Submit a Theater
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Sidebar - Nearby Cities */}
@@ -186,7 +255,7 @@ export default async function CityPage({ params }: CityPageProps) {
                 </p>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                  className="inline-flex items-center text-sm font-medium text-[#D4AF37] transition-colors hover:text-[#E5C158]"
                 >
                   Submit a theater →
                 </Link>
