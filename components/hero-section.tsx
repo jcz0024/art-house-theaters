@@ -4,23 +4,24 @@ import { Search } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
+// City buttons that link to metro area pages
 const cities = [
-  "Los Angeles",
-  "New York",
-  "Chicago",
-  "Austin",
-  "Seattle",
-  "Portland",
-  "San Francisco",
-  "Brooklyn",
-  "Denver",
-  "Boston",
-  "Philadelphia",
-  "Minneapolis",
-  "Atlanta",
-  "Nashville",
-  "Miami",
-  "Detroit",
+  { name: "Los Angeles", slug: "los-angeles" },
+  { name: "New York", slug: "new-york" },
+  { name: "Chicago", slug: "chicago" },
+  { name: "Austin", slug: "austin" },
+  { name: "Seattle", slug: "seattle" },
+  { name: "Portland", slug: "portland" },
+  { name: "San Francisco", slug: "san-francisco" },
+  { name: "Boston", slug: "boston" },
+  { name: "Denver", slug: "denver" },
+  { name: "Philadelphia", slug: "philadelphia" },
+  { name: "Minneapolis", slug: "minneapolis" },
+  { name: "Atlanta", slug: "atlanta" },
+  { name: "Miami", slug: "miami" },
+  { name: "Detroit", slug: "detroit" },
+  { name: "Washington DC", slug: "washington-dc" },
+  { name: "Dallas", slug: "dallas" },
 ]
 
 export function HeroSection() {
@@ -89,20 +90,20 @@ export function HeroSection() {
             >
               {cities.map((city) => (
                 <button
-                  key={city}
-                  onClick={() => handleSearch(city)}
+                  key={city.slug}
+                  onClick={() => router.push(`/city/${city.slug}`)}
                   className="flex-shrink-0 rounded-full border border-border bg-card/30 px-5 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-all hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
                 >
-                  {city}
+                  {city.name}
                 </button>
               ))}
               {cities.map((city) => (
                 <button
-                  key={`${city}-duplicate`}
-                  onClick={() => handleSearch(city)}
+                  key={`${city.slug}-duplicate`}
+                  onClick={() => router.push(`/city/${city.slug}`)}
                   className="flex-shrink-0 rounded-full border border-border bg-card/30 px-5 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-all hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]"
                 >
-                  {city}
+                  {city.name}
                 </button>
               ))}
             </div>

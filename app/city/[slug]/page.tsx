@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import { MapPin } from "lucide-react"
 import type { Metadata } from "next"
+import { getMetroArea } from "@/lib/metro-areas"
 
 export const dynamic = 'force-dynamic'
 
@@ -12,69 +13,48 @@ interface CityPageProps {
   }>
 }
 
-// City mapping: slug → display name
-const cityMapping: Record<string, string> = {
-  "los-angeles": "Los Angeles",
-  "new-york": "New York",
-  "brooklyn": "Brooklyn",
-  "chicago": "Chicago",
-  "austin": "Austin",
-  "seattle": "Seattle",
-  "portland": "Portland",
-  "san-francisco": "San Francisco",
-  "denver": "Denver",
-}
-
-// State mapping for display
-const cityStateMapping: Record<string, string> = {
-  "los-angeles": "CA",
-  "new-york": "NY",
-  "brooklyn": "NY",
-  "chicago": "IL",
-  "austin": "TX",
-  "seattle": "WA",
-  "portland": "OR",
-  "san-francisco": "CA",
-  "denver": "CO",
-}
-
-// City descriptions for SEO
-const cityDescriptions: Record<string, string> = {
-  "los-angeles": "Discover independent and art house cinemas in Los Angeles. From historic single-screen theaters to modern screening rooms, find the best repertory and indie film venues in LA.",
-  "new-york": "Explore New York City's legendary art house theater scene. From Manhattan's Film Forum to Brooklyn's indie havens, find independent cinemas showing classic and contemporary films.",
-  "brooklyn": "Find art house theaters in Brooklyn, NY. Discover indie cinemas, repertory houses, and community-focused film venues in one of America's most vibrant neighborhoods.",
-  "chicago": "Discover Chicago's independent cinema landscape. Find art house theaters, repertory houses, and community cinemas throughout the Windy City.",
-  "austin": "Explore Austin's vibrant art house theater scene. From the Alamo Drafthouse to historic venues, find indie cinemas in Texas's film-loving capital.",
-  "seattle": "Find art house theaters in Seattle. Discover independent cinemas, repertory houses, and film festivals in the Pacific Northwest's cultural hub.",
-  "portland": "Explore Portland's unique art house theater scene. Find indie cinemas, brewpub theaters, and repertory houses in Oregon's creative capital.",
-  "san-francisco": "Discover art house cinemas in San Francisco. From historic theaters to modern screening rooms, find independent film venues in the Bay Area.",
-  "denver": "Find art house theaters in Denver. Explore independent cinemas and repertory houses in Colorado's Mile High City.",
-}
-
-// Helper to convert slug to city name
-function slugToCityName(slug: string): string {
-  return cityMapping[slug] || slug.split('-').map(word =>
+// Helper to convert slug to display name (uses metro area name if applicable)
+function getDisplayName(slug: string): string {
+  const metro = getMetroArea(slug)
+  if (metro) return metro.displayName
+  // Fallback: convert slug to title case
+  return slug.split('-').map(word =>
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')
+}
+
+// Helper to get state for display
+function getState(slug: string): string {
+  const metro = getMetroArea(slug)
+  if (metro) return metro.state
+  return ""
+}
+
+// Helper to get description for SEO
+function getDescription(slug: string): string {
+  const metro = getMetroArea(slug)
+  if (metro) return metro.description
+  const cityName = getDisplayName(slug)
+  return `Find art house and independent theaters in ${cityName}. Discover repertory cinemas, indie film venues, and community theaters.`
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
   const { slug } = await params
-  const cityName = slugToCityName(slug)
-  const description = cityDescriptions[slug] || `Find art house and independent theaters in ${cityName}. Discover repertory cinemas, indie film venues, and community theaters.`
+  const displayName = getDisplayName(slug)
+  const description = getDescription(slug)
 
   return {
-    title: `Art House Theaters in ${cityName} | Independent Cinemas`,
+    title: `Art House Theaters in ${displayName} | Independent Cinemas`,
     description,
     openGraph: {
-      title: `Art House Theaters in ${cityName}`,
+      title: `Art House Theaters in ${displayName}`,
       description,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Art House Theaters in ${cityName}`,
+      title: `Art House Theaters in ${displayName}`,
       description,
     },
   }
@@ -94,58 +74,106 @@ interface Theater {
 // Nearby cities for sidebar
 const nearbyCitiesMap: Record<string, { name: string; slug: string }[]> = {
   "los-angeles": [
-    { name: "San Francisco", slug: "san-francisco" },
+    { name: "San Francisco Bay Area", slug: "san-francisco" },
     { name: "San Diego", slug: "san-diego" },
-    { name: "Portland", slug: "portland" },
-    { name: "Seattle", slug: "seattle" },
+    { name: "Portland Area", slug: "portland" },
+    { name: "Seattle Area", slug: "seattle" },
   ],
   "new-york": [
-    { name: "Brooklyn", slug: "brooklyn" },
-    { name: "Boston", slug: "boston" },
-    { name: "Philadelphia", slug: "philadelphia" },
-    { name: "Chicago", slug: "chicago" },
-  ],
-  "brooklyn": [
-    { name: "New York", slug: "new-york" },
-    { name: "Boston", slug: "boston" },
-    { name: "Philadelphia", slug: "philadelphia" },
-    { name: "Chicago", slug: "chicago" },
-  ],
-  "chicago": [
-    { name: "Detroit", slug: "detroit" },
-    { name: "Minneapolis", slug: "minneapolis" },
-    { name: "Denver", slug: "denver" },
-    { name: "New York", slug: "new-york" },
-  ],
-  "austin": [
-    { name: "Houston", slug: "houston" },
-    { name: "Dallas", slug: "dallas" },
-    { name: "Denver", slug: "denver" },
-    { name: "Los Angeles", slug: "los-angeles" },
-  ],
-  "seattle": [
-    { name: "Portland", slug: "portland" },
-    { name: "San Francisco", slug: "san-francisco" },
-    { name: "Los Angeles", slug: "los-angeles" },
-    { name: "Denver", slug: "denver" },
-  ],
-  "portland": [
-    { name: "Seattle", slug: "seattle" },
-    { name: "San Francisco", slug: "san-francisco" },
-    { name: "Los Angeles", slug: "los-angeles" },
-    { name: "Denver", slug: "denver" },
+    { name: "Boston Area", slug: "boston" },
+    { name: "Philadelphia Area", slug: "philadelphia" },
+    { name: "Washington DC Area", slug: "washington-dc" },
+    { name: "Chicago Area", slug: "chicago" },
   ],
   "san-francisco": [
-    { name: "Los Angeles", slug: "los-angeles" },
-    { name: "Portland", slug: "portland" },
-    { name: "Seattle", slug: "seattle" },
-    { name: "Denver", slug: "denver" },
+    { name: "Los Angeles Area", slug: "los-angeles" },
+    { name: "Portland Area", slug: "portland" },
+    { name: "Seattle Area", slug: "seattle" },
+    { name: "Denver Area", slug: "denver" },
+  ],
+  "chicago": [
+    { name: "Detroit Area", slug: "detroit" },
+    { name: "Minneapolis-St. Paul", slug: "minneapolis" },
+    { name: "Denver Area", slug: "denver" },
+    { name: "New York Area", slug: "new-york" },
+  ],
+  "boston": [
+    { name: "New York Area", slug: "new-york" },
+    { name: "Philadelphia Area", slug: "philadelphia" },
+    { name: "Washington DC Area", slug: "washington-dc" },
+    { name: "Chicago Area", slug: "chicago" },
+  ],
+  "philadelphia": [
+    { name: "New York Area", slug: "new-york" },
+    { name: "Washington DC Area", slug: "washington-dc" },
+    { name: "Boston Area", slug: "boston" },
+    { name: "Baltimore", slug: "baltimore" },
+  ],
+  "washington-dc": [
+    { name: "Philadelphia Area", slug: "philadelphia" },
+    { name: "New York Area", slug: "new-york" },
+    { name: "Baltimore", slug: "baltimore" },
+    { name: "Atlanta Area", slug: "atlanta" },
+  ],
+  "seattle": [
+    { name: "Portland Area", slug: "portland" },
+    { name: "San Francisco Bay Area", slug: "san-francisco" },
+    { name: "Los Angeles Area", slug: "los-angeles" },
+    { name: "Denver Area", slug: "denver" },
+  ],
+  "portland": [
+    { name: "Seattle Area", slug: "seattle" },
+    { name: "San Francisco Bay Area", slug: "san-francisco" },
+    { name: "Los Angeles Area", slug: "los-angeles" },
+    { name: "Denver Area", slug: "denver" },
   ],
   "denver": [
-    { name: "Austin", slug: "austin" },
-    { name: "Chicago", slug: "chicago" },
-    { name: "Los Angeles", slug: "los-angeles" },
-    { name: "Seattle", slug: "seattle" },
+    { name: "Austin Area", slug: "austin" },
+    { name: "Chicago Area", slug: "chicago" },
+    { name: "Los Angeles Area", slug: "los-angeles" },
+    { name: "Seattle Area", slug: "seattle" },
+  ],
+  "austin": [
+    { name: "Houston Area", slug: "houston" },
+    { name: "Dallas-Fort Worth", slug: "dallas" },
+    { name: "Denver Area", slug: "denver" },
+    { name: "Los Angeles Area", slug: "los-angeles" },
+  ],
+  "dallas": [
+    { name: "Houston Area", slug: "houston" },
+    { name: "Austin Area", slug: "austin" },
+    { name: "Denver Area", slug: "denver" },
+    { name: "Atlanta Area", slug: "atlanta" },
+  ],
+  "houston": [
+    { name: "Austin Area", slug: "austin" },
+    { name: "Dallas-Fort Worth", slug: "dallas" },
+    { name: "Miami Area", slug: "miami" },
+    { name: "Atlanta Area", slug: "atlanta" },
+  ],
+  "miami": [
+    { name: "Atlanta Area", slug: "atlanta" },
+    { name: "Houston Area", slug: "houston" },
+    { name: "Washington DC Area", slug: "washington-dc" },
+    { name: "New York Area", slug: "new-york" },
+  ],
+  "atlanta": [
+    { name: "Miami Area", slug: "miami" },
+    { name: "Washington DC Area", slug: "washington-dc" },
+    { name: "Dallas-Fort Worth", slug: "dallas" },
+    { name: "Chicago Area", slug: "chicago" },
+  ],
+  "detroit": [
+    { name: "Chicago Area", slug: "chicago" },
+    { name: "Minneapolis-St. Paul", slug: "minneapolis" },
+    { name: "Cleveland", slug: "cleveland" },
+    { name: "Toronto", slug: "toronto" },
+  ],
+  "minneapolis": [
+    { name: "Chicago Area", slug: "chicago" },
+    { name: "Detroit Area", slug: "detroit" },
+    { name: "Denver Area", slug: "denver" },
+    { name: "Milwaukee", slug: "milwaukee" },
   ],
 }
 
@@ -158,16 +186,38 @@ const defaultNearbyCities = [
 
 export default async function CityPage({ params }: CityPageProps) {
   const { slug } = await params
-  const cityName = slugToCityName(slug)
-  const state = cityStateMapping[slug] || ""
+  const displayName = getDisplayName(slug)
+  const state = getState(slug)
   const nearbyCities = nearbyCitiesMap[slug] || defaultNearbyCities.filter(c => c.slug !== slug)
+  const metro = getMetroArea(slug)
 
-  // Query Supabase for theaters in this city
-  const { data: theaters, error } = await supabase
-    .from('theaters')
-    .select('slug, name, city, state, year_established, screens, is_nonprofit, website')
-    .ilike('city', cityName)
-    .order('name')
+  // Query Supabase for theaters
+  let theaters: Theater[] | null = null
+  let error: Error | null = null
+
+  if (metro) {
+    // Metro area: fetch all theaters where city matches any city in the metro
+    const { data, error: queryError } = await supabase
+      .from('theaters')
+      .select('slug, name, city, state, year_established, screens, is_nonprofit, website')
+      .in('city', metro.cities)
+      .order('city')
+      .order('name')
+    theaters = data
+    error = queryError
+  } else {
+    // Non-metro: exact city match (case-insensitive)
+    const cityName = slug.split('-').map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ')
+    const { data, error: queryError } = await supabase
+      .from('theaters')
+      .select('slug, name, city, state, year_established, screens, is_nonprofit, website')
+      .ilike('city', cityName)
+      .order('name')
+    theaters = data
+    error = queryError
+  }
 
   if (error) {
     console.error('Error fetching theaters:', error)
@@ -187,11 +237,11 @@ export default async function CityPage({ params }: CityPageProps) {
             <span>/</span>
             <span className="text-foreground">Cities</span>
             <span>/</span>
-            <span className="text-foreground">{cityName}</span>
+            <span className="text-foreground">{displayName}</span>
           </div>
 
           <h1 className="mb-4 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Art House Theaters in {cityName}
+            Art House Theaters in {displayName}
           </h1>
 
           <div className="flex items-center gap-2 text-muted-foreground">
@@ -217,7 +267,7 @@ export default async function CityPage({ params }: CityPageProps) {
             ) : (
               <div className="rounded-lg border border-border/40 bg-card/30 p-12 text-center">
                 <h2 className="mb-4 font-serif text-2xl font-semibold text-foreground">
-                  No theaters found in {cityName}
+                  No theaters found in {displayName}
                 </h2>
                 <p className="mb-6 text-muted-foreground">
                   Know one? Submit it.
