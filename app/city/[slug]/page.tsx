@@ -71,124 +71,10 @@ interface Theater {
   website: string | null
 }
 
-// Nearby cities for sidebar
-const nearbyCitiesMap: Record<string, { name: string; slug: string }[]> = {
-  "los-angeles": [
-    { name: "San Francisco Bay Area", slug: "san-francisco" },
-    { name: "San Diego", slug: "san-diego" },
-    { name: "Portland Area", slug: "portland" },
-    { name: "Seattle Area", slug: "seattle" },
-  ],
-  "new-york": [
-    { name: "Boston Area", slug: "boston" },
-    { name: "Philadelphia Area", slug: "philadelphia" },
-    { name: "Washington DC Area", slug: "washington-dc" },
-    { name: "Chicago Area", slug: "chicago" },
-  ],
-  "san-francisco": [
-    { name: "Los Angeles Area", slug: "los-angeles" },
-    { name: "Portland Area", slug: "portland" },
-    { name: "Seattle Area", slug: "seattle" },
-    { name: "Denver Area", slug: "denver" },
-  ],
-  "chicago": [
-    { name: "Detroit Area", slug: "detroit" },
-    { name: "Minneapolis-St. Paul", slug: "minneapolis" },
-    { name: "Denver Area", slug: "denver" },
-    { name: "New York Area", slug: "new-york" },
-  ],
-  "boston": [
-    { name: "New York Area", slug: "new-york" },
-    { name: "Philadelphia Area", slug: "philadelphia" },
-    { name: "Washington DC Area", slug: "washington-dc" },
-    { name: "Chicago Area", slug: "chicago" },
-  ],
-  "philadelphia": [
-    { name: "New York Area", slug: "new-york" },
-    { name: "Washington DC Area", slug: "washington-dc" },
-    { name: "Boston Area", slug: "boston" },
-    { name: "Baltimore", slug: "baltimore" },
-  ],
-  "washington-dc": [
-    { name: "Philadelphia Area", slug: "philadelphia" },
-    { name: "New York Area", slug: "new-york" },
-    { name: "Baltimore", slug: "baltimore" },
-    { name: "Atlanta Area", slug: "atlanta" },
-  ],
-  "seattle": [
-    { name: "Portland Area", slug: "portland" },
-    { name: "San Francisco Bay Area", slug: "san-francisco" },
-    { name: "Los Angeles Area", slug: "los-angeles" },
-    { name: "Denver Area", slug: "denver" },
-  ],
-  "portland": [
-    { name: "Seattle Area", slug: "seattle" },
-    { name: "San Francisco Bay Area", slug: "san-francisco" },
-    { name: "Los Angeles Area", slug: "los-angeles" },
-    { name: "Denver Area", slug: "denver" },
-  ],
-  "denver": [
-    { name: "Austin Area", slug: "austin" },
-    { name: "Chicago Area", slug: "chicago" },
-    { name: "Los Angeles Area", slug: "los-angeles" },
-    { name: "Seattle Area", slug: "seattle" },
-  ],
-  "austin": [
-    { name: "Houston Area", slug: "houston" },
-    { name: "Dallas-Fort Worth", slug: "dallas" },
-    { name: "Denver Area", slug: "denver" },
-    { name: "Los Angeles Area", slug: "los-angeles" },
-  ],
-  "dallas": [
-    { name: "Houston Area", slug: "houston" },
-    { name: "Austin Area", slug: "austin" },
-    { name: "Denver Area", slug: "denver" },
-    { name: "Atlanta Area", slug: "atlanta" },
-  ],
-  "houston": [
-    { name: "Austin Area", slug: "austin" },
-    { name: "Dallas-Fort Worth", slug: "dallas" },
-    { name: "Miami Area", slug: "miami" },
-    { name: "Atlanta Area", slug: "atlanta" },
-  ],
-  "miami": [
-    { name: "Atlanta Area", slug: "atlanta" },
-    { name: "Houston Area", slug: "houston" },
-    { name: "Washington DC Area", slug: "washington-dc" },
-    { name: "New York Area", slug: "new-york" },
-  ],
-  "atlanta": [
-    { name: "Miami Area", slug: "miami" },
-    { name: "Washington DC Area", slug: "washington-dc" },
-    { name: "Dallas-Fort Worth", slug: "dallas" },
-    { name: "Chicago Area", slug: "chicago" },
-  ],
-  "detroit": [
-    { name: "Chicago Area", slug: "chicago" },
-    { name: "Minneapolis-St. Paul", slug: "minneapolis" },
-    { name: "Cleveland", slug: "cleveland" },
-    { name: "Toronto", slug: "toronto" },
-  ],
-  "minneapolis": [
-    { name: "Chicago Area", slug: "chicago" },
-    { name: "Detroit Area", slug: "detroit" },
-    { name: "Denver Area", slug: "denver" },
-    { name: "Milwaukee", slug: "milwaukee" },
-  ],
-}
-
-const defaultNearbyCities = [
-  { name: "Los Angeles", slug: "los-angeles" },
-  { name: "New York", slug: "new-york" },
-  { name: "Chicago", slug: "chicago" },
-  { name: "Austin", slug: "austin" },
-]
-
 export default async function CityPage({ params }: CityPageProps) {
   const { slug } = await params
   const displayName = getDisplayName(slug)
   const state = getState(slug)
-  const nearbyCities = nearbyCitiesMap[slug] || defaultNearbyCities.filter(c => c.slug !== slug)
   const metro = getMetroArea(slug)
 
   // Query Supabase for theaters
@@ -257,65 +143,40 @@ export default async function CityPage({ params }: CityPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-12">
-          {/* Main Content */}
-          <main>
-            {/* Theater Grid or Empty State */}
-            {theaterList.length > 0 ? (
-              <div className="grid gap-6 sm:grid-cols-2">
-                {theaterList.map((theater) => (
-                  <TheaterCard key={theater.slug} {...theater} />
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-lg border border-border/40 bg-card/30 p-12 text-center">
-                <h2 className="mb-4 font-serif text-2xl font-semibold text-foreground">
-                  No theaters found in {displayName}
-                </h2>
-                <p className="mb-6 text-muted-foreground">
-                  Know one? Submit it.
-                </p>
-                <Link
-                  href="/submit"
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black motion-safe:transition-colors hover:bg-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  Submit a Theater
-                </Link>
-              </div>
-            )}
-          </main>
+      {/* Theater Grid */}
+      <main className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+        {theaterList.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {theaterList.map((theater) => (
+              <TheaterCard key={theater.slug} {...theater} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-border/40 bg-card/30 p-12 text-center">
+            <h2 className="mb-4 font-serif text-2xl font-semibold text-foreground">
+              No theaters found in {displayName}
+            </h2>
+            <p className="mb-6 text-muted-foreground">
+              Know one? Submit it.
+            </p>
+            <Link
+              href="/submit"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black motion-safe:transition-colors hover:bg-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Submit a Theater
+            </Link>
+          </div>
+        )}
+      </main>
 
-          {/* Sidebar - Nearby Cities */}
-          <aside className="mt-12 lg:mt-0">
-            <div className="sticky top-8 rounded-lg border border-border/40 bg-card/30 p-6 backdrop-blur-sm">
-              <h2 className="mb-6 font-serif text-xl font-semibold text-foreground">Nearby Cities</h2>
-              <nav className="space-y-1" aria-label="Nearby cities">
-                {nearbyCities.map((nearbyCity) => (
-                  <Link
-                    key={nearbyCity.slug}
-                    href={`/city/${nearbyCity.slug}`}
-                    className="block rounded-md px-2 py-2 text-sm text-muted-foreground motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  >
-                    {nearbyCity.name} →
-                  </Link>
-                ))}
-              </nav>
-
-              <div className="mt-8 border-t border-border/40 pt-6">
-                <h3 className="mb-3 text-sm font-medium text-foreground">Can't find your city?</h3>
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                  We're always adding new theaters. Submit your favorite art house cinema.
-                </p>
-                <Link
-                  href="/submit"
-                  className="inline-flex min-h-11 items-center rounded-md px-1 py-2 text-sm font-medium text-[#D4AF37] motion-safe:transition-colors hover:text-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-6"
-                >
-                  Submit a theater →
-                </Link>
-              </div>
-            </div>
-          </aside>
+      {/* Can't find your city? */}
+      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="rounded-lg border border-border/50 bg-card/30 p-6 motion-safe:transition-all motion-safe:duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+          <h3 className="font-serif text-xl font-medium text-amber-50 mb-3">Can't find your city?</h3>
+          <p className="text-neutral-400 mb-4">We're always adding new theaters. Submit your favorite art house cinema.</p>
+          <Link href="/submit" className="text-[#D4AF37] hover:text-[#E5C158] motion-safe:transition-colors">
+            Submit a theater →
+          </Link>
         </div>
       </div>
     </div>
