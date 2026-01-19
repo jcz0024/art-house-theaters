@@ -4,7 +4,7 @@ Directory of independent and art house cinemas across the US.
 Live: arthousemovietheaters.com | Deploys via Vercel from main branch
 
 ## Stack
-- Next.js 14 (App Router) + TypeScript + Tailwind CSS
+- Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
 - Supabase (PostgreSQL)
 - Vercel hosting
 
@@ -43,8 +43,18 @@ types/
 ## Database
 - Supabase project: ovadwsnbmvrarouzwmam.supabase.co
 - Main table: `theaters` with columns: slug, name, city, state, year_established, screens, is_nonprofit, website, description
+- **488 theaters** across all 50 states (as of Jan 2026)
+- Data completeness: 47% have descriptions, 99% have websites
+
+## Scripts
+- `scripts/download-theater-photos.ts` - Fetch photos from Google Places API
+- `scripts/photo-review-server.ts` - Interactive tool for selecting best photos (port 3457)
+- `scripts/check-db.ts` - Database stats checker
 
 ## Environment Variables
 Required in Vercel:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+For scripts (local only):
+- `GOOGLE_PLACES_API_KEY` - For downloading theater photos

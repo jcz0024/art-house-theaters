@@ -11,13 +11,27 @@ The most comprehensive directory of independent and art house movie theaters in 
 - "Art house movie theaters" search term has 900% YoY growth
 - There's a real audience looking for this information
 
-## Current State (v1.0)
+## Current State (v1.1 - January 2026)
 
-- 347 theaters cataloged from Film Comment's 2015 comprehensive list
-- Homepage displays all theaters
-- City pages for major markets (LA, NYC, Chicago, Austin, etc.)
-- Individual theater detail pages
-- Basic search functionality
+- **488 theaters** across all 50 states
+- Homepage displays all theaters with search
+- City pages with metro area grouping (LA, NYC, Chicago, Austin, etc.)
+- Individual theater detail pages with SEO metadata
+- Full-text search with state abbreviation support
+
+### Data Stats
+| Metric | Count |
+|--------|-------|
+| Total theaters | 488 |
+| States covered | 50 |
+| With descriptions | 229 (47%) |
+| With websites | 487 (99%) |
+| With year established | 481 (98%) |
+
+### Photo Pipeline (in progress)
+- ~1,000 photos downloaded from Google Places API
+- Photo review tool built for manual curation
+- Pending: integrate selected photos into site
 
 ## Target Users
 
@@ -28,13 +42,15 @@ The most comprehensive directory of independent and art house movie theaters in 
 ## Roadmap
 
 ### Phase 1: Data Quality (Current Priority)
-- [ ] Add missing theaters (Gardena Cinema, etc.)
-- [ ] Verify existing theater data is accurate
-- [ ] Add theater descriptions and images
+- [x] Expand database from 347 to 488 theaters
+- [x] Cover all 50 states
+- [ ] Add missing theaters (user submissions)
+- [ ] Fill remaining 259 theater descriptions
+- [ ] Integrate curated photos into site
 - [ ] Add programming type tags (repertory, first-run indie, foreign, etc.)
 
 ### Phase 2: Discovery Features
-- [ ] Working search with filters
+- [x] Working search with state abbreviation support
 - [ ] "Near me" geolocation
 - [ ] Browse by state
 - [ ] Theater recommendations

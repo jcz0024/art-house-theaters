@@ -6,13 +6,13 @@ A directory of independent and art house cinemas across the United States.
 
 ## About
 
-This directory helps cinephiles discover theaters showing foreign films, classic cinema, independent features, and repertory programming. Currently featuring 347 theaters across the US.
+This directory helps cinephiles discover theaters showing foreign films, classic cinema, independent features, and repertory programming. Currently featuring **488 theaters** across all 50 US states.
 
 ## Tech Stack
 
-- [Next.js 14](https://nextjs.org/) - React framework
-- [Supabase](https://supabase.com/) - Database
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Next.js 16](https://nextjs.org/) - React framework with App Router
+- [Supabase](https://supabase.com/) - PostgreSQL database
+- [Tailwind CSS 4](https://tailwindcss.com/) - Styling
 - [Vercel](https://vercel.com/) - Hosting
 
 ## Development

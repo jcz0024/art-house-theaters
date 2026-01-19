@@ -7,6 +7,7 @@ export interface Theater {
   screens: number | null
   is_nonprofit: boolean | null
   website: string | null
+  description: string | null
 }
 
 export interface City {
