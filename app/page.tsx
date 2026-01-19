@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import Link from "next/link"
 import { HeroSection } from "@/components/hero-section"
 import { FeaturedTheaterCard } from "@/components/featured-theater-card"
+import { FeaturedTheaterSkeleton } from "@/components/featured-theater-skeleton"
 import { CityCard } from "@/components/city-card"
 import { Footer } from "@/components/footer"
 import { supabase } from "@/lib/supabase"
@@ -34,6 +36,9 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 async function getFeaturedTheaters(): Promise<Theater[]> {
+  // Minimum display time for skeleton to prevent flash
+  const minDisplayTime = new Promise(resolve => setTimeout(resolve, 300))
+
   try {
     // First, get theaters with descriptions
     const { data: withDescriptions, error: descError } = await supabase
@@ -51,6 +56,7 @@ async function getFeaturedTheaters(): Promise<Theater[]> {
 
     // If we have at least 3 theaters with descriptions, shuffle and return 3
     if (theatersWithDesc.length >= 3) {
+      await minDisplayTime
       return shuffleArray(theatersWithDesc).slice(0, 3)
     }
 
@@ -69,6 +75,7 @@ async function getFeaturedTheaters(): Promise<Theater[]> {
     const theatersWithoutDesc = withoutDescriptions || []
     const shuffledWithoutDesc = shuffleArray(theatersWithoutDesc).slice(0, needed)
 
+    await minDisplayTime
     return [...shuffleArray(theatersWithDesc), ...shuffledWithoutDesc].slice(0, 3)
   } catch (e) {
     console.error('Error fetching featured theaters:', e)
@@ -76,9 +83,29 @@ async function getFeaturedTheaters(): Promise<Theater[]> {
   }
 }
 
-export default async function Home() {
+function FeaturedTheatersSkeleton() {
+  return (
+    <div className="grid gap-6 md:grid-cols-3">
+      <FeaturedTheaterSkeleton />
+      <FeaturedTheaterSkeleton />
+      <FeaturedTheaterSkeleton />
+    </div>
+  )
+}
+
+async function FeaturedTheatersGrid() {
   const featuredTheaters = await getFeaturedTheaters()
 
+  return (
+    <div className="grid gap-6 md:grid-cols-3">
+      {featuredTheaters.map((theater) => (
+        <FeaturedTheaterCard key={theater.slug} {...theater} />
+      ))}
+    </div>
+  )
+}
+
+export default function Home() {
   return (
     <div className="dark min-h-screen bg-[#0a0a0a]">
       <HeroSection />
@@ -94,20 +121,18 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {featuredTheaters.map((theater) => (
-            <FeaturedTheaterCard key={theater.slug} {...theater} />
-          ))}
-        </div>
+        <Suspense fallback={<FeaturedTheatersSkeleton />}>
+          <FeaturedTheatersGrid />
+        </Suspense>
 
-        {/* Explore All Link */}
+        {/* Explore All Link - minimum 44px touch target on mobile */}
         <div className="mt-10 text-center">
           <Link
             href="/theaters"
-            className="group inline-flex items-center gap-2 text-lg font-medium text-[#D4AF37] transition-all hover:gap-3 hover:text-[#E5C158]"
+            className="group inline-flex min-h-11 items-center gap-2 rounded-md px-4 py-2 text-lg font-medium text-[#D4AF37] motion-safe:transition-all hover:gap-3 hover:text-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] sm:min-h-6"
           >
             Explore All Theaters
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="h-5 w-5 motion-safe:transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
         </div>
       </div>
