@@ -186,7 +186,7 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
       {/* Main Content */}
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         {/* What's Playing Section */}
-        <section className="rounded-lg border border-border/40 bg-card/30 p-8 backdrop-blur-sm">
+        <section className="rounded-lg border border-border/40 bg-card/30 p-8 backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.15)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="rounded-full bg-[#D4AF37]/10 p-2" aria-hidden="true">
               <Film className="h-5 w-5 text-[#D4AF37]" />
