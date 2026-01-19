@@ -92,8 +92,8 @@ export function HeroSection() {
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-linear-to-r from-[#0a0a0a] to-transparent" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-[#0a0a0a] to-transparent" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-linear-to-r from-[#0f0f0f] to-transparent" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-[#0f0f0f] to-transparent" aria-hidden="true" />
 
           <div className="flex gap-3 overflow-hidden pb-2">
             <div
