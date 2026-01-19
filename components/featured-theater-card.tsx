@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { MapPin, ArrowRight, ExternalLink } from "lucide-react"
+import { MapPin, ExternalLink } from "lucide-react"
 
 interface FeaturedTheaterCardProps {
   name: string
@@ -33,7 +33,8 @@ export function FeaturedTheaterCard({
   if (is_nonprofit) tags.push('Nonprofit')
 
   return (
-    <Card className="group relative overflow-hidden border-zinc-800/60 bg-[#1a1a1a] backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:border-[#D4AF37]/50 hover:bg-[#1c1c1c] hover:shadow-xl hover:shadow-[#D4AF37]/20 focus-within:border-[#D4AF37]/50 focus-within:shadow-xl focus-within:shadow-[#D4AF37]/20">
+    <Link href={`/theater/${slug}`} className="block">
+    <Card className="group relative cursor-pointer overflow-hidden border-zinc-800/60 bg-[#1a1a1a] backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:scale-[1.02] hover:border-[#D4AF37]/50 hover:bg-[#1c1c1c] hover:shadow-xl hover:shadow-[#D4AF37]/20 focus-within:border-[#D4AF37]/50 focus-within:shadow-xl focus-within:shadow-[#D4AF37]/20">
       {/* Image area with fixed aspect ratio to prevent CLS */}
       <div className="relative aspect-4/3 overflow-hidden bg-zinc-900">
         {/* Fallback gradient */}
@@ -92,19 +93,13 @@ export function FeaturedTheaterCard({
 
         {/* Links - minimum 44px touch targets on mobile */}
         <div className="flex items-center gap-4">
-          <Link
-            href={`/theater/${slug}`}
-            className="group/link inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 py-2 text-sm font-medium text-[#D4AF37] motion-safe:transition-all hover:gap-2 hover:text-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] sm:min-h-6"
-          >
-            View Theater
-            <ArrowRight className="h-4 w-4 motion-safe:transition-transform group-hover/link:translate-x-0.5" aria-hidden="true" />
-          </Link>
           {website && (
             <a
               href={website}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Visit ${name} website (opens in new tab)`}
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex min-h-11 items-center gap-1 rounded-md px-1 py-2 text-sm text-zinc-400 motion-safe:transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] sm:min-h-6"
             >
               Website
@@ -120,5 +115,6 @@ export function FeaturedTheaterCard({
       {/* Subtle gold border glow effect */}
       <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-[#D4AF37]/0 motion-safe:transition-all motion-safe:duration-300 group-hover:ring-[#D4AF37]/30 group-focus-within:ring-[#D4AF37]/30" />
     </Card>
+    </Link>
   )
 }
