@@ -52,7 +52,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden border-b border-border/50 bg-linear-to-b from-background via-background/98 to-[#0a0a0a] px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section className="relative overflow-hidden bg-transparent px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.025]"
         aria-hidden="true"

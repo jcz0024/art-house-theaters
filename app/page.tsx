@@ -107,11 +107,11 @@ async function FeaturedTheatersGrid() {
 
 export default function Home() {
   return (
-    <div className="dark min-h-screen bg-[#0a0a0a]">
+    <div className="dark min-h-screen bg-linear-to-b from-[#0f0f0f] via-[#0a0a0a] to-[#050505]">
       <HeroSection />
 
       {/* Featured Theaters Section */}
-      <div className="bg-[#0a0a0a] mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="font-serif text-4xl font-medium text-amber-50 md:text-5xl">
             <span className="text-[#D4AF37]">Featured</span> Theaters
@@ -138,7 +138,7 @@ export default function Home() {
       </div>
 
       {/* Browse by City section */}
-      <div className="bg-[#0a0a0a] mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="font-serif text-4xl font-medium text-amber-50 md:text-5xl">Browse by City</h2>
           <p className="mt-3 text-base text-neutral-400 md:text-lg">Discover art house theaters across America</p>

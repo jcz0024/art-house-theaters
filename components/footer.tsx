@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="border-t border-neutral-800 bg-[#0f0f0f]">
+    <footer className="border-t border-neutral-800 bg-transparent">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           {/* Left: Site name and tagline */}
