@@ -73,11 +73,10 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
   const citySlug = createCitySlug(theater.city)
 
   return (
-    <div className="dark min-h-screen bg-background">
+    <div className="dark min-h-screen bg-linear-to-b from-[#0f0f0f] via-[#0a0a0a] to-[#050505]">
       {/* Hero Section */}
-      <div className="relative border-b border-border/40 bg-linear-to-b from-card/40 to-background">
-        <div className="relative h-[200px] overflow-hidden bg-linear-to-br from-card/60 via-card/40 to-background sm:h-70">
-          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
+      <div className="relative bg-transparent">
+        <div className="relative h-50 overflow-hidden bg-transparent sm:h-70">
 
           {/* Breadcrumb */}
           <nav className="absolute bottom-0 left-0 right-0" aria-label="Breadcrumb">

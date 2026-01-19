@@ -35,7 +35,7 @@ export default async function TheatersPage() {
   const theaters = await getAllTheaters()
 
   return (
-    <div className="dark min-h-screen bg-[#0a0a0a]">
+    <div className="dark min-h-screen bg-linear-to-b from-[#0f0f0f] via-[#0a0a0a] to-[#050505]">
       {/* Header */}
       <header className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Back link */}

@@ -226,9 +226,9 @@ export default async function CityPage({ params }: CityPageProps) {
   const theaterList: Theater[] = theaters || []
 
   return (
-    <div className="dark min-h-screen bg-background">
+    <div className="dark min-h-screen bg-linear-to-b from-[#0f0f0f] via-[#0a0a0a] to-[#050505]">
       {/* City Header */}
-      <div className="border-b border-border/40 bg-card/30 backdrop-blur-sm">
+      <div className="bg-transparent">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
