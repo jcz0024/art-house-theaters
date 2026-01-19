@@ -107,39 +107,7 @@ async function FeaturedTheatersGrid() {
 
 export default function Home() {
   return (
-    <div className="dark relative min-h-screen bg-[#0a0a0a]">
-      {/* Page-wide cinematic atmosphere overlay */}
-      <div className="pointer-events-none fixed inset-0 z-10" aria-hidden="true">
-        {/* Film grain texture */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
-        {/* Radial vignette - darker edges */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(ellipse 80% 60% at 50% 40%, transparent 0%, rgba(0,0,0,0.4) 100%)`,
-          }}
-        />
-        {/* Left side vignette - slightly stronger */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.2) 100%)`,
-          }}
-        />
-        {/* Top vignette for projector light effect */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 20%, transparent 85%, rgba(0,0,0,0.25) 100%)`,
-          }}
-        />
-      </div>
-
+    <div className="dark min-h-screen bg-[#0a0a0a]">
       <HeroSection />
 
       {/* Featured Theaters Section */}
