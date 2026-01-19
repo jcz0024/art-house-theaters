@@ -75,26 +75,32 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
   return (
     <div className="dark min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative border-b border-border/40 bg-gradient-to-b from-card/40 to-background">
-        <div className="relative h-[200px] overflow-hidden bg-gradient-to-br from-card/60 via-card/40 to-background sm:h-[280px]">
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      <div className="relative border-b border-border/40 bg-linear-to-b from-card/40 to-background">
+        <div className="relative h-[200px] overflow-hidden bg-linear-to-br from-card/60 via-card/40 to-background sm:h-70">
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-transparent" />
 
           {/* Breadcrumb */}
-          <div className="absolute bottom-0 left-0 right-0">
+          <nav className="absolute bottom-0 left-0 right-0" aria-label="Breadcrumb">
             <div className="mx-auto max-w-5xl px-4 pb-6 sm:px-6 lg:px-8">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Link href="/" className="transition-colors hover:text-foreground">
+                <Link
+                  href="/"
+                  className="rounded-md px-1 py-0.5 motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
                   Home
                 </Link>
-                <span>/</span>
-                <Link href={`/city/${citySlug}`} className="transition-colors hover:text-foreground">
+                <span aria-hidden="true">/</span>
+                <Link
+                  href={`/city/${citySlug}`}
+                  className="rounded-md px-1 py-0.5 motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
                   {theater.city}
                 </Link>
-                <span>/</span>
-                <span className="text-foreground">{theater.name}</span>
+                <span aria-hidden="true">/</span>
+                <span className="text-foreground" aria-current="page">{theater.name}</span>
               </div>
             </div>
-          </div>
+          </nav>
         </div>
 
         {/* Theater Title & Location */}
@@ -104,7 +110,7 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
           </h1>
 
           <div className="mb-6 flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
+            <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="text-base">
               {theater.city}, {theater.state}
             </span>
@@ -121,19 +127,19 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
           <div className="mb-8 flex flex-wrap gap-3">
             {theater.year_established && theater.year_established > 0 && (
               <Badge variant="secondary" className="bg-secondary/50 text-sm font-normal">
-                <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                Est. {theater.year_established}
+                <Calendar className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                <span className="tabular-nums">Est. {theater.year_established}</span>
               </Badge>
             )}
             {theater.screens && theater.screens > 0 && (
               <Badge variant="secondary" className="bg-secondary/50 text-sm font-normal">
-                <Monitor className="mr-1.5 h-3.5 w-3.5" />
-                {theater.screens} {theater.screens === 1 ? 'Screen' : 'Screens'}
+                <Monitor className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                <span className="tabular-nums">{theater.screens}</span> {theater.screens === 1 ? 'Screen' : 'Screens'}
               </Badge>
             )}
             {theater.is_nonprofit && (
               <Badge variant="secondary" className="bg-[#D4AF37]/20 text-[#D4AF37] text-sm font-normal">
-                <Heart className="mr-1.5 h-3.5 w-3.5" />
+                <Heart className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
                 Nonprofit
               </Badge>
             )}
@@ -145,10 +151,15 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
               <Button
                 asChild
                 size="lg"
-                className="bg-[#D4AF37] text-black hover:bg-[#E5C158]"
+                className="bg-[#D4AF37] text-black motion-safe:transition-colors hover:bg-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                <a href={theater.website} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
+                <a
+                  href={theater.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit ${theater.name} website (opens in new tab)`}
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" aria-hidden="true" />
                   Visit Website
                 </a>
               </Button>
@@ -157,14 +168,15 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
               asChild
               size="lg"
               variant="outline"
-              className="border-border/60 hover:border-[#D4AF37] bg-transparent"
+              className="border-border/60 bg-transparent motion-safe:transition-colors hover:border-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${theater.name}, ${theater.city}, ${theater.state}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`Get directions to ${theater.name} on Google Maps (opens in new tab)`}
               >
-                <Navigation className="mr-2 h-4 w-4" />
+                <Navigation className="mr-2 h-4 w-4" aria-hidden="true" />
                 Get Directions
               </a>
             </Button>
@@ -173,11 +185,11 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         {/* What's Playing Section */}
-        <div className="rounded-lg border border-border/40 bg-card/30 p-8 backdrop-blur-sm">
+        <section className="rounded-lg border border-border/40 bg-card/30 p-8 backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-full bg-[#D4AF37]/10 p-2">
+            <div className="rounded-full bg-[#D4AF37]/10 p-2" aria-hidden="true">
               <Film className="h-5 w-5 text-[#D4AF37]" />
             </div>
             <h2 className="font-serif text-xl font-semibold text-foreground">What's Playing</h2>
@@ -188,26 +200,35 @@ export default async function TheaterPage({ params }: TheaterPageProps) {
           </p>
           {theater.website && (
             <div className="mt-6">
-              <Button asChild variant="outline" className="border-border/60 hover:border-[#D4AF37] bg-transparent">
-                <a href={theater.website} target="_blank" rel="noopener noreferrer">
+              <Button
+                asChild
+                variant="outline"
+                className="border-border/60 bg-transparent motion-safe:transition-colors hover:border-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <a
+                  href={theater.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View current schedule at ${theater.name} (opens in new tab)`}
+                >
                   View Current Schedule
-                  <ExternalLink className="ml-2 h-4 w-4" />
+                  <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" />
                 </a>
               </Button>
             </div>
           )}
-        </div>
+        </section>
 
         {/* Back to City Link */}
         <div className="mt-12 border-t border-border/40 pt-8">
           <Link
             href={`/city/${citySlug}`}
-            className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex min-h-11 items-center rounded-md px-1 py-2 text-sm text-muted-foreground motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-6"
           >
             ← Back to all theaters in {theater.city}
           </Link>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

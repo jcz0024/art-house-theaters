@@ -99,16 +99,20 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       {/* Search Header */}
       <div className="border-b border-border/40 bg-card/30 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">
+          {/* Breadcrumb */}
+          <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <Link
+              href="/"
+              className="rounded-md px-1 py-0.5 motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
               Home
             </Link>
-            <span>/</span>
-            <span className="text-foreground">Search</span>
-          </div>
+            <span aria-hidden="true">/</span>
+            <span className="text-foreground" aria-current="page">Search</span>
+          </nav>
 
           <div className="flex items-center gap-3">
-            <Search className="h-8 w-8 text-[#D4AF37]" />
+            <Search className="h-8 w-8 text-[#D4AF37]" aria-hidden="true" />
             <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               {query ? `Results for "${query}"` : "Search Theaters"}
             </h1>
@@ -116,16 +120,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
           {query && (
             <p className="mt-4 text-muted-foreground">
-              {theaters.length} {theaters.length === 1 ? "theater" : "theaters"} found
+              <span className="font-variant-numeric tabular-nums">{theaters.length}</span> {theaters.length === 1 ? "theater" : "theaters"} found
             </p>
           )}
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {!query ? (
           <div className="rounded-lg border border-border/40 bg-card/30 p-12 text-center">
-            <Search className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <Search className="mx-auto mb-4 h-12 w-12 text-muted-foreground" aria-hidden="true" />
             <h2 className="mb-4 font-serif text-2xl font-semibold text-foreground">
               Enter a search term
             </h2>
@@ -149,13 +153,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black transition-colors hover:bg-[#E5C158]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black motion-safe:transition-colors hover:bg-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Browse All Theaters
             </Link>
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }

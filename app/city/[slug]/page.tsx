@@ -230,24 +230,28 @@ export default async function CityPage({ params }: CityPageProps) {
       {/* City Header */}
       <div className="border-b border-border/40 bg-card/30 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">
+          {/* Breadcrumb */}
+          <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <Link
+              href="/"
+              className="rounded-md px-1 py-0.5 motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
               Home
             </Link>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <span className="text-foreground">Cities</span>
-            <span>/</span>
-            <span className="text-foreground">{displayName}</span>
-          </div>
+            <span aria-hidden="true">/</span>
+            <span className="text-foreground" aria-current="page">{displayName}</span>
+          </nav>
 
           <h1 className="mb-4 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Art House Theaters in {displayName}
           </h1>
 
           <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
+            <MapPin className="h-4 w-4" aria-hidden="true" />
             <span className="text-sm">
-              {state && `${state} • `}{theaterList.length} {theaterList.length === 1 ? "theater" : "theaters"}
+              {state && `${state} • `}<span className="tabular-nums">{theaterList.length}</span> {theaterList.length === 1 ? "theater" : "theaters"}
             </span>
           </div>
         </div>
@@ -256,7 +260,7 @@ export default async function CityPage({ params }: CityPageProps) {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-12">
           {/* Main Content */}
-          <div>
+          <main>
             {/* Theater Grid or Empty State */}
             {theaterList.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2">
@@ -274,24 +278,24 @@ export default async function CityPage({ params }: CityPageProps) {
                 </p>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black transition-colors hover:bg-[#E5C158]"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#D4AF37] px-6 py-3 font-medium text-black motion-safe:transition-colors hover:bg-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   Submit a Theater
                 </Link>
               </div>
             )}
-          </div>
+          </main>
 
           {/* Sidebar - Nearby Cities */}
           <aside className="mt-12 lg:mt-0">
             <div className="sticky top-8 rounded-lg border border-border/40 bg-card/30 p-6 backdrop-blur-sm">
               <h2 className="mb-6 font-serif text-xl font-semibold text-foreground">Nearby Cities</h2>
-              <nav className="space-y-3">
+              <nav className="space-y-1" aria-label="Nearby cities">
                 {nearbyCities.map((nearbyCity) => (
                   <Link
                     key={nearbyCity.slug}
                     href={`/city/${nearbyCity.slug}`}
-                    className="block text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="block rounded-md px-2 py-2 text-sm text-muted-foreground motion-safe:transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     {nearbyCity.name} →
                   </Link>
@@ -305,7 +309,7 @@ export default async function CityPage({ params }: CityPageProps) {
                 </p>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center text-sm font-medium text-[#D4AF37] transition-colors hover:text-[#E5C158]"
+                  className="inline-flex min-h-11 items-center rounded-md px-1 py-2 text-sm font-medium text-[#D4AF37] motion-safe:transition-colors hover:text-[#E5C158] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-6"
                 >
                   Submit a theater →
                 </Link>

@@ -11,18 +11,30 @@ export function Footer() {
             <p className="mt-1 text-sm text-neutral-400">Celebrating independent cinema</p>
           </div>
 
-          {/* Right: Links */}
-          <nav className="flex flex-wrap gap-6">
-            <Link href="/about" className="text-sm text-neutral-300 transition-colors hover:text-[#D4AF37]">
+          {/* Right: Links with proper touch targets */}
+          <nav className="flex flex-wrap gap-2 sm:gap-4" aria-label="Footer navigation">
+            <Link
+              href="/about"
+              className="rounded-md px-2 py-2 text-sm text-neutral-300 motion-safe:transition-colors hover:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f0f]"
+            >
               About
             </Link>
-            <Link href="/contact" className="text-sm text-neutral-300 transition-colors hover:text-[#D4AF37]">
+            <Link
+              href="/contact"
+              className="rounded-md px-2 py-2 text-sm text-neutral-300 motion-safe:transition-colors hover:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f0f]"
+            >
               Contact
             </Link>
-            <Link href="/submit" className="text-sm text-neutral-300 transition-colors hover:text-[#D4AF37]">
+            <Link
+              href="/submit"
+              className="rounded-md px-2 py-2 text-sm text-neutral-300 motion-safe:transition-colors hover:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f0f]"
+            >
               Submit a Theater
             </Link>
-            <Link href="/privacy" className="text-sm text-neutral-300 transition-colors hover:text-[#D4AF37]">
+            <Link
+              href="/privacy"
+              className="rounded-md px-2 py-2 text-sm text-neutral-300 motion-safe:transition-colors hover:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0f0f]"
+            >
               Privacy
             </Link>
           </nav>

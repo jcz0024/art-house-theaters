@@ -37,13 +37,13 @@ export default async function TheatersPage() {
   return (
     <div className="dark min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <header className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Back link */}
         <Link
           href="/"
-          className="group mb-8 inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-[#D4AF37]"
+          className="group mb-8 inline-flex min-h-11 items-center gap-2 rounded-md px-1 py-2 text-sm text-zinc-400 motion-safe:transition-colors hover:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] sm:min-h-6"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-4 w-4 motion-safe:transition-transform group-hover:-translate-x-0.5" aria-hidden="true" />
           Back to Home
         </Link>
 
@@ -52,19 +52,19 @@ export default async function TheatersPage() {
             All Art House Theaters
           </h1>
           <p className="mt-4 text-lg text-neutral-400">
-            Showing <span className="font-medium text-[#D4AF37]">{theaters.length}</span> theaters across the United States
+            Showing <span className="tabular-nums font-medium text-[#D4AF37]">{theaters.length}</span> theaters across the United States
           </p>
         </div>
-      </div>
+      </header>
 
       {/* Theater Grid */}
-      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {theaters.map((theater) => (
             <TheaterCard key={theater.slug} {...theater} />
           ))}
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />
