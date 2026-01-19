@@ -72,7 +72,6 @@ export function TheaterCard({ name, city, state, slug, year_established, screens
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Visit ${name} website (opens in new tab)`}
-              onClick={(e) => e.stopPropagation()}
               className="inline-flex min-h-11 items-center gap-1 rounded-md px-1 py-2 text-sm text-zinc-400 motion-safe:transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] sm:min-h-6"
             >
               Website
