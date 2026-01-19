@@ -172,7 +172,7 @@ export default async function CityPage({ params }: CityPageProps) {
       {/* Can't find your city? */}
       <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="rounded-lg border border-border/50 bg-card/30 p-6 motion-safe:transition-all motion-safe:duration-300 hover:border-[#D4AF37]/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-          <h3 className="font-serif text-xl font-medium text-amber-50 mb-3">Can't find your city?</h3>
+          <h3 className="font-serif text-xl font-medium text-amber-50 mb-3">Can't find your theater?</h3>
           <p className="text-neutral-400 mb-4">We're always adding new theaters. Submit your favorite art house cinema.</p>
           <Link href="/submit" className="text-[#D4AF37] hover:text-[#E5C158] motion-safe:transition-colors">
             Submit a theater →
